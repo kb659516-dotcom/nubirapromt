@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#241c42">
+<title>NubiraPrompt — умные промты для твоих идей</title>
+<style>
+:root{--bg:#f7f6fb;--ink:#211a38;--purple:#241c42;--tile:#352a53;--accent:#c6a7ff;--muted:#777187;--white:#fff;--line:#e8e3f0}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+button,input,select{font:inherit}button{cursor:pointer}.wrap{max-width:1100px;margin:auto;padding:24px 18px 60px}
+.hero{background:var(--purple);color:white;border-radius:28px;padding:clamp(22px,5vw,48px);box-shadow:0 18px 45px #241c421c}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.brand{display:flex;align-items:center;gap:12px;font-weight:800;font-size:clamp(25px,5vw,40px);letter-spacing:-1px}.spark{color:var(--accent);font-size:34px}.tagline{color:#d5cbea;margin:14px 0 24px;font-size:clamp(16px,2.8vw,21px)}
+.langs{display:flex;gap:6px}.lang{border:1px solid #6c6087;color:#eee8ff;background:transparent;border-radius:10px;padding:8px 12px}.lang.active{background:var(--accent);border-color:var(--accent);color:var(--purple);font-weight:700}
+.searchbox{display:flex;align-items:center;gap:10px;background:#fff;border-radius:14px;padding:0 16px;color:#746d82}.searchbox input{width:100%;border:0;outline:0;padding:17px 0;color:var(--ink);background:transparent;font-size:17px}
+.section-title{font-size:25px;margin:28px 0 15px;letter-spacing:-.5px}.categories{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.cat{display:flex;flex-direction:column;align-items:flex-start;gap:15px;background:var(--tile);border:2px solid transparent;color:white;border-radius:17px;padding:20px;min-height:120px;text-align:left;transition:.15s}.cat .ico{font-size:25px;color:var(--accent)}.cat span:last-child{font-size:18px;font-weight:650}.cat:hover,.cat.active{border-color:var(--accent);transform:translateY(-2px)}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:28px 0 14px}.toolbar h2{margin:0;font-size:25px}.filters{display:flex;gap:8px;flex-wrap:wrap}.filter,.clear{border:1px solid var(--line);background:white;border-radius:999px;padding:9px 13px;color:var(--ink)}.filter.active{background:var(--purple);color:white;border-color:var(--purple)}.prompts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.card{background:white;border:1px solid var(--line);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:12px;min-width:0}.cardhead{display:flex;align-items:center;justify-content:space-between;gap:8px}.pill{font-size:12px;padding:5px 9px;border-radius:999px;background:#f0eaff;color:#5d4197;font-weight:700}.pill.paid{background:#fff1d9;color:#875600}.card h3{font-size:19px;line-height:1.3;margin:0}.card p{color:var(--muted);line-height:1.5;margin:0}.cardfoot{display:flex;gap:8px;margin-top:auto;padding-top:4px}.btn{border:0;border-radius:11px;padding:11px 14px;font-weight:700}.primary{background:var(--purple);color:white}.secondary{background:#f0edf6;color:var(--purple)}.btn:focus-visible,.cat:focus-visible,.filter:focus-visible{outline:3px solid #9d7be6;outline-offset:2px}.empty{grid-column:1/-1;text-align:center;padding:38px;background:white;border:1px dashed #d6cde6;border-radius:18px;color:var(--muted)}
+footer{text-align:center;color:var(--muted);padding:28px 0 0;font-size:13px}.modal{position:fixed;inset:0;background:#151020b8;display:none;align-items:center;justify-content:center;padding:18px;z-index:5}.modal.open{display:flex}.dialog{background:white;border-radius:20px;max-width:650px;width:100%;max-height:85vh;overflow:auto;padding:24px}.dialog-head{display:flex;justify-content:space-between;gap:15px;align-items:flex-start}.dialog h2{margin:0 0 12px}.x{border:0;background:#f0edf6;border-radius:9px;padding:8px 11px}.prompt-text{white-space:pre-wrap;line-height:1.6;background:#f7f4fc;border-radius:12px;padding:16px;margin:12px 0 18px}.note{font-size:13px;color:var(--muted);line-height:1.5}
+@media(max-width:700px){.categories{grid-template-columns:repeat(2,minmax(0,1fr))}.prompts{grid-template-columns:1fr}.cat{min-height:100px;padding:16px}.cat span:last-child{font-size:16px}.wrap{padding:14px 12px 40px}.hero{border-radius:22px}.section-title,.toolbar h2{font-size:22px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <section class="hero">
+    <div class="top">
+      <div class="brand"><span class="spark">✧</span><span>NubiraPrompt</span></div>
+      <div class="langs" aria-label="Язык сайта">
+        <button class="lang active" data-lang="ru">RU</button><button class="lang" data-lang="uz">UZ</button>
+      </div>
+    </div>
+    <p class="tagline" id="tagline">Умные промты для твоих идей</p>
+    <label class="searchbox"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="Найти нужный промт..." autocomplete="off"></label>
+    <h2 class="section-title" id="choose-title">Выбери категорию</h2>
+    <div class="categories" id="categories"></div>
+  </section>
+
+  <div class="toolbar">
+    <h2 id="catalog-title">Каталог промтов</h2>
+    <div class="filters">
+      <button class="filter active" data-kind="all" id="all-filter">Все</button>
+      <button class="filter" data-kind="free" id="free-filter">Бесплатные</button>
+      <button class="filter" data-kind="paid" id="paid-filter">Платные</button>
+    </div>
+  </div>
+  <div class="prompts" id="prompts" aria-live="polite"></div>
+  <footer>© <span id="year"></span> NubiraPrompt · <span id="footer-text">Промты для реальных задач</span><br><br><span id="demo-note">Демо-каталог: платные карточки пока не подключены к оплате.</span></footer>
+</main>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="dialog">
+    <div class="dialog-head"><div><span class="pill" id="modal-category"></span><h2 id="modal-title" style="margin-top:12px"></h2></div><button class="x" id="close-modal" aria-label="Закрыть">✕</button></div>
+    <p id="modal-desc"></p>
+    <div class="prompt-text" id="modal-prompt"></div>
+    <button class="btn primary" id="copy-modal">Копировать промт</button>
+    <p class="note" id="modal-note">Проверь ответ ИИ и замени текст в квадратных скобках на свои данные.</p>
+  </div>
+</div>
+<script>
+const categories = [
+ {id:"marketing",icon:"♧",ru:"Маркетинг",uz:"Marketing"},
+ {id:"business",icon:"▣",ru:"Бизнес",uz:"Biznes"},
+ {id:"images",icon:"▧",ru:"Изображения",uz:"Rasmlar"},
+ {id:"learning",icon:"⌘",ru:"Обучение",uz:"Ta’lim"},
+ {id:"video",icon:"▷",ru:"Видео и Reels",uz:"Video va Reels"},
+ {id:"coding",icon:"‹/›",ru:"Программирование",uz:"Dasturlash"}
+];
+const prompts = [
+ {id:1,cat:"marketing",free:true,ru:{title:"Пост для Instagram-магазина",desc:"Создай рекламный текст с понятным предложением и без выдуманных характеристик.",prompt:"Ты — маркетолог небольшого магазина в Узбекистане. Создай 3 варианта поста для Instagram о товаре: [название и описание]. Аудитория: [кто покупает]. Тон: современный, дружелюбный, без давления. Для каждого варианта добавь заголовок, текст и призыв к действию. Не придумывай цену, скидки или свойства, которых я не указал."},uz:{title:"Instagram do‘koni uchun post",desc:"Aniq taklif bilan reklama matni yarating.",prompt:"Siz O‘zbekistondagi kichik do‘kon marketologisiz. Instagram uchun [mahsulot nomi va tavsifi] haqida 3 xil post yozing. Auditoriya: [xaridorlar]. Uslub: zamonaviy, samimiy va bosimsiz. Har bir variantga sarlavha, matn va harakatga chaqiriq qo‘shing. Berilmagan narx, chegirma yoki xususiyatlarni o‘ylab topmang."}},
+ {id:2,cat:"marketing",free:true,ru:{title:"Контент-план на 7 дней",desc:"План публикаций для одного человека с небольшим бюджетом.",prompt:"Ты — SMM-стратег. Ниша: [ниша], аудитория: [описание], страна: Узбекистан. Составь контент-план на 7 дней: 3 коротких видео, 2 карусели и идеи Stories. Для каждой публикации укажи хук, пользу, краткий сценарий и CTA. Учитывай, что контент создаёт один человек без рекламного бюджета. Не выдумывай тренды и статистику."},uz:{title:"7 kunlik kontent-reja",desc:"Kichik budjet bilan kontent reja tuzing.",prompt:"Siz SMM-strategsiz. Yo‘nalish: [soha], auditoriya: [tavsif], mamlakat: O‘zbekiston. 7 kunlik reja tuzing: 3 ta qisqa video, 2 ta karusel va Stories g‘oyalari. Har biri uchun boshlang‘ich jumla, foyda, qisqa ssenariy va CTA yozing. Kontentni bir kishi reklama budjetisiz tayyorlashini hisobga oling. Trend va statistikani to‘qib chiqarmang."}},
+ {id:3,cat:"business",free:true,ru:{title:"Улучшить описание продукта",desc:"Объясни ценность продукта простыми словами.",prompt:"Ты — специалист по продукту. Продукт: [название и описание]. Клиент: [кто он и какая у него проблема]. Составь: 1) описание в 2 предложениях, 2) три ключевые выгоды, 3) ответы на три вероятных возражения, 4) короткий призыв к действию. Не обещай того, чего нет в описании продукта. Если данных не хватает, сначала задай вопросы."},uz:{title:"Mahsulot tavsifini yaxshilash",desc:"Mahsulot qiymatini sodda tushuntiring.",prompt:"Siz mahsulot bo‘yicha mutaxassissiz. Mahsulot: [nomi va tavsifi]. Mijoz: [kim va muammosi]. Quyidagilarni yozing: 1) 2 jumlalik tavsif, 2) uchta asosiy foyda, 3) uchta ehtimoliy e’tirozga javob, 4) qisqa harakatga chaqiriq. Tavsifda yo‘q va’dalarni bermang. Ma’lumot yetarli bo‘lmasa, avval savol bering."}},
+ {id:4,cat:"business",free:true,ru:{title:"Подготовка к разговору с клиентом",desc:"Структура консультационного B2B-разговора.",prompt:"Ты — опытный B2B-продавец. Я предлагаю [продукт] клиентам из сферы [ниша]. Подготовь план первого разговора: 5 открытых вопросов о текущем процессе, 3 уточняющих вопроса о проблемах, краткое объяснение ценности и мягкий переход к следующему шагу. Не используй давление и шаблонные манипуляции."},uz:{title:"Mijoz bilan suhbatga tayyorgarlik",desc:"B2B suhbati uchun tuzilma.",prompt:"Siz tajribali B2B sotuvchisiz. Men [mahsulot]ni [soha] mijozlariga taklif qilaman. Birinchi suhbat rejasini tuzing: jarayon haqida 5 ta ochiq savol, muammolar haqida 3 ta aniqlashtiruvchi savol, qiymatni qisqa tushuntirish va keyingi bosqichga muloyim o‘tish. Bosim va manipulyatsiyadan foydalanmang."}},
+ {id:5,cat:"images",free:true,ru:{title:"Рекламное фото товара",desc:"Промт для генератора изображений с загруженной фотографией.",prompt:"Используй загруженное фото товара как основной референс. Сохрани его форму, цвет, пропорции и узнаваемые детали. Создай чистую коммерческую предметную фотографию для интернет-магазина: мягкий студийный свет, аккуратные тени, современный минималистичный фон, реалистичные материалы. Не добавляй текст, логотипы и несуществующие детали."},uz:{title:"Mahsulot uchun reklama surati",desc:"Yuklangan surat asosida vizual yaratish uchun prompt.",prompt:"Yuklangan mahsulot suratidan asosiy namuna sifatida foydalaning. Shakli, rangi, nisbatlari va muhim detallarini saqlang. Internet-do‘kon uchun toza reklama suratini yarating: yumshoq studiya yorug‘ligi, tabiiy soyalar, zamonaviy minimal fon va real materiallar. Matn, logotip yoki mavjud bo‘lmagan detallarni qo‘shmang."}},
+ {id:6,cat:"learning",free:true,ru:{title:"Объясни сложную тему просто",desc:"Учебный помощник, который проверяет понимание.",prompt:"Объясни мне тему [название] так, будто я начинающий и впервые её изучаю. Используй простые слова, один пример из жизни и пошаговое объяснение. Затем задай 3 вопроса по теме — по одному за раз. Не показывай ответы сразу: сначала дождись моего ответа, затем объясни ошибки."},uz:{title:"Murakkab mavzuni sodda tushuntir",desc:"Tushunganingizni tekshiradigan o‘quv yordamchisi.",prompt:"Menga [mavzu]ni uni birinchi marta o‘rganayotgan boshlovchiga tushuntirgandek tushuntiring. Sodda so‘zlar, hayotiy misol va bosqichma-bosqich izohdan foydalaning. Keyin mavzu bo‘yicha 3 ta savolni bittadan bering. Javobni darhol ko‘rsatmang: avval javobimni kuting, so‘ng xatolarimni tushuntiring."}},
+ {id:7,cat:"video",free:true,ru:{title:"Сценарий Reels на 30 секунд",desc:"Короткое видео с хуком, демонстрацией и CTA.",prompt:"Ты — сценарист коротких видео. Тема: [тема], аудитория: [аудитория], цель: [цель]. Напиши сценарий Reels на 25–35 секунд. Раздели на сцены с таймингом. Для каждой сцены укажи, что показывать, текст на экране и озвучку. Начни с конкретной проблемы или результата, избегай кликбейта и закончи естественным CTA."},uz:{title:"30 soniyalik Reels ssenariysi",desc:"Kirish, namoyish va CTA bilan qisqa video.",prompt:"Siz qisqa videolar ssenariy muallifisiz. Mavzu: [mavzu], auditoriya: [auditoriya], maqsad: [maqsad]. 25–35 soniyalik Reels ssenariysini yozing. Sahnalarga va vaqtga ajrating. Har bir sahna uchun tasvir, ekrandagi matn va ovozli matnni ko‘rsating. Muammo yoki natijadan boshlang, yolg‘on shov-shuvdan qoching va tabiiy CTA bilan yakunlang."}},
+ {id:8,cat:"coding",free:true,ru:{title:"Объясни код начинающему",desc:"Разбор кода по шагам с примерами.",prompt:"Объясни следующий код начинающему программисту: [вставь код]. Сначала опиши, что он делает в целом, затем разбери важные строки по порядку. Объясни незнакомые термины простыми словами, укажи возможные ошибки и предложи небольшое упражнение. Не утверждай, что код протестирован, если ты его не запускал."},uz:{title:"Kodni boshlovchiga tushuntir",desc:"Kodni bosqichma-bosqich izohlash.",prompt:"Quyidagi kodni boshlovchi dasturchiga tushuntiring: [kodni kiriting]. Avval umumiy vazifasini ayting, keyin muhim satrlarni ketma-ket izohlang. Notanish atamalarni sodda tushuntiring, ehtimoliy xatolarni ko‘rsating va kichik mashq bering. Kod ishga tushirilmagan bo‘lsa, sinovdan o‘tgan deb aytmang."}},
+ {id:9,cat:"marketing",free:false,ru:{title:"Полная система контента на месяц",desc:"Расширенный набор для планирования и оценки публикаций.",prompt:"Платный набор включает расширенную систему: анализ аудитории, контент-матрицу на 30 дней, 12 сценариев коротких видео, шаблоны каруселей, Stories и таблицу метрик. В демо-версии доступно только описание продукта."},uz:{title:"Bir oylik kontent tizimi",desc:"Kontentni rejalash va baholash uchun kengaytirilgan to‘plam.",prompt:"Pullik to‘plam auditoriya tahlili, 30 kunlik kontent jadvali, 12 ta qisqa video ssenariysi, karusel va Stories shablonlari hamda ko‘rsatkichlar jadvalini o‘z ichiga oladi. Demo versiyada faqat mahsulot tavsifi mavjud."}},
+ {id:10,cat:"business",free:false,ru:{title:"Бизнес-процессы и автоматизация",desc:"Расширенный набор для описания и улучшения рабочих процессов.",prompt:"Платный набор включает шаблоны интервью, карту текущего процесса AS-IS, целевого процесса TO-BE, список требований и критерии приёмки. Доступ к полным материалам появится после подключения оплаты."},uz:{title:"Biznes jarayonlari va avtomatlashtirish",desc:"Ish jarayonlarini tasvirlash va yaxshilash uchun to‘plam.",prompt:"Pullik to‘plam intervyu shablonlari, AS-IS va TO-BE jarayon xaritalari, talablar ro‘yxati va qabul mezonlarini o‘z ichiga oladi. To‘liq materiallarga kirish to‘lov tizimi ulangandan keyin ochiladi."}}
+];
+const state={lang:"ru",cat:"all",kind:"all",search:"",selected:null};
+const $=s=>document.querySelector(s);
+const tr=(ru,uz)=>state.lang==="ru"?ru:uz;
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function renderCategories(){
+ $("#categories").innerHTML=categories.map(c=>`<button class="cat ${state.cat===c.id?"active":""}" data-cat="${c.id}"><span class="ico">${c.icon}</span><span>${c[state.lang]}</span></button>`).join("");
+ $("#categories").querySelectorAll("[data-cat]").forEach(b=>b.onclick=()=>{state.cat=state.cat===b.dataset.cat?"all":b.dataset.cat;renderCategories();renderPrompts();});
+}
+function renderPrompts(){
+ const q=state.search.trim().toLocaleLowerCase();
+ const list=prompts.filter(p=>(state.cat==="all"||p.cat===state.cat)&&(state.kind==="all"||(state.kind==="free"?p.free:!p.free))&&(!q||(p[state.lang].title+" "+p[state.lang].desc+" "+p[state.lang].prompt).toLocaleLowerCase().includes(q)));
+ $("#prompts").innerHTML=list.length?list.map(p=>`<article class="card"><div class="cardhead"><span class="pill">${categories.find(c=>c.id===p.cat)[state.lang]}</span><span class="pill ${p.free?"":"paid"}">${p.free?tr("Бесплатно","Bepul"):tr("Платный","Pullik")}</span></div><h3>${esc(p[state.lang].title)}</h3><p>${esc(p[state.lang].desc)}</p><div class="cardfoot"><button class="btn primary" data-open="${p.id}">${p.free?tr("Открыть промт","Promptni ochish"):tr("Подробнее","Batafsil")}</button></div></article>`).join(""):`<div class="empty">${tr("Ничего не найдено. Попробуй изменить запрос или категорию.","Hech narsa topilmadi. Qidiruv yoki kategoriyani o‘zgartiring.")}</div>`;
+ $("#prompts").querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>openPrompt(Number(b.dataset.open)));
+}
+function setLang(lang){
+ state.lang=lang;document.documentElement.lang=lang;
+ document.querySelectorAll("[data-lang]").forEach(b=>b.classList.toggle("active",b.dataset.lang===lang));
+ $("#tagline").textContent=tr("Умные промты для твоих идей","G‘oyalaringiz uchun aqlli promptlar");
+ $("#choose-title").textContent=tr("Выбери категорию","Kategoriyani tanlang");
+ $("#search").placeholder=tr("Найти нужный промт...","Kerakli promptni toping...");
+ $("#catalog-title").textContent=tr("Каталог промтов","Promptlar katalogi");
+ $("#all-filter").textContent=tr("Все","Barchasi");$("#free-filter").textContent=tr("Бесплатные","Bepul");$("#paid-filter").textContent=tr("Платные","Pullik");
+ $("#footer-text").textContent=tr("Промты для реальных задач","Haqiqiy vazifalar uchun promptlar");
+ $("#demo-note").textContent=tr("Демо-каталог: платные карточки пока не подключены к оплате.","Demo katalog: pullik kartalar hali to‘lov tizimiga ulanmagan.");
+ $("#copy-modal").textContent=tr("Копировать промт","Promptni nusxalash");
+ $("#modal-note").textContent=tr("Проверь ответ ИИ и замени текст в квадратных скобках на свои данные.","AI javobini tekshiring va kvadrat qavs ichidagi matnni o‘z ma’lumotlaringiz bilan almashtiring.");
+ renderCategories();renderPrompts();
+}
+function openPrompt(id){
+ const p=prompts.find(x=>x.id===id);state.selected=p;
+ $("#modal-category").textContent=categories.find(c=>c.id===p.cat)[state.lang];
+ $("#modal-title").textContent=p[state.lang].title;$("#modal-desc").textContent=p[state.lang].desc;
+ $("#modal-prompt").textContent=p[state.lang].prompt;
+ $("#copy-modal").style.display=p.free?"inline-block":"none";
+ $("#modal-note").style.display=p.free?"block":"none";
+ if(!p.free)$("#modal-prompt").textContent=tr("Это платная категория. В текущей версии сайта оплата и выдача полного материала ещё не подключены. Не принимай оплату вручную без согласованного способа выдачи продукта.","Bu pullik kategoriya. Saytning hozirgi versiyasida to‘lov va to‘liq materialni berish tizimi ulanmagan.");
+ $("#modal").classList.add("open");
+}
+async function copyText(text){
+ try{await navigator.clipboard.writeText(text);$("#copy-modal").textContent=tr("Скопировано ✓","Nusxalandi ✓");setTimeout(()=>$("#copy-modal").textContent=tr("Копировать промт","Promptni nusxalash"),1600);}
+ catch(e){const ta=document.createElement("textarea");ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove();$("#copy-modal").textContent=tr("Скопировано ✓","Nusxalandi ✓");}
+}
+document.querySelectorAll("[data-lang]").forEach(b=>b.onclick=()=>setLang(b.dataset.lang));
+document.querySelectorAll("[data-kind]").forEach(b=>b.onclick=()=>{state.kind=b.dataset.kind;document.querySelectorAll("[data-kind]").forEach(x=>x.classList.toggle("active",x===b));renderPrompts();});
+$("#search").addEventListener("input",e=>{state.search=e.target.value;renderPrompts();});
+$("#close-modal").onclick=()=>$("#modal").classList.remove("open");
+$("#modal").addEventListener("click",e=>{if(e.target.id==="modal")$("#modal").classList.remove("open");});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")$("#modal").classList.remove("open");});
+$("#copy-modal").onclick=()=>state.selected&&state.selected.free&&copyText(state.selected[state.lang].prompt);
+$("#year").textContent=new Date().getFullYear();
+setLang("ru");
+</script>
+</body>
+</html>
